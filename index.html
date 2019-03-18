@@ -1,0 +1,102 @@
+<html lang="th">
+<head>
+  <title>ค้นหาหมายเลขผู้สมัคร ส.ส. ทั่วประเทศ 2562</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="ค้นหารายชื่อผู้สมัคร ส.ส. ทั่วประเทศ 2562 ค้นหาเบอร์ผู้สมัครพรรคการเมืองในเขตเลือกตั้งของคุณ">
+  <meta name="keywords" content="เลือกตั้ง2562">
+  <meta name="author" content="Nopachat Kalayanapan">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Sarabun:400,700" rel="stylesheet">
+  <style>
+    body { font-family: 'Sarabun', sans-serif; }
+  </style>
+</head>
+<body>
+  <div id="app" class="container-fluid">
+    <h1 class="h5 my-3"><i class="fas fa-search mr-2"></i>ค้นหาหมายเลขผู้สมัคร ส.ส. 2562</h1>
+    <div class="form-group">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Step 1</span>
+        </div>
+        <select @change="getDistrictNos" v-model="selectedProvince" class="form-control">
+          <option disabled value="">เลือกจังหวัด</option>
+          <option v-for="province in provinces">
+            {{ province }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row mb-3">
+      <div class="col">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Step 2</span>
+          </div>
+          <select @change="getParties" v-model="selectedDistrictNo" class="form-control">
+            <option disabled value="">เลือกเขตเลือกตั้ง</option>
+            <option v-for="districtNo in districtNos">
+              {{ districtNo }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div v-if="selectedProvince" class="col-auto">
+        <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#districtModal">ฉันไม่ทราบ</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Step 3</span>
+        </div>
+        <select @change="getCandidate" v-model="selectedParty" class="form-control">
+          <option disabled value="">เลือกพรรค</option>
+          <option v-for="party in parties">
+            {{ party }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div v-if="candidate">
+      <h2 class="h5 mt-4 mb-3">ผลการค้นหา</h2>
+      <div class="mb-2"><span class="d-inline-block" style="width:100px">จังหวัด</span>{{ selectedProvince }}<span class="ml-3 mr-2">เขตเลือกตั้งที่</span>{{ selectedDistrictNo }}</div>
+      <div><span class="d-inline-block" style="width:100px">พรรค</span><strong class="text-primary" style="font-size:150%">{{ selectedParty }}</strong></div>
+      <div><span class="d-inline-block" style="width:100px">ชื่อผู้สมัคร</span><strong>{{ candidate.title }}{{ candidate.first_name }} {{ candidate.last_name }}</strong></div>
+      <div><span class="d-inline-block" style="width:100px">หมายเลข</span><strong class="text-danger" style="font-size:500%">{{ candidate.registered_no }}</strong></div>
+    </div>
+    <hr class="mt-4">
+    <small class="text-muted">&copy;2019 Nopash, ทำระบบค้นหาข้อมูลจาก <a href="https://www.ect.go.th/ect_th/download/article/article_20190218162759.pdf" target="_blank">PDF รายชื่อ ส.ส. บนเว็บ กกต.</a> และรายชื่อเขตเลือกตั้งจาก <a href="https://www.ect.go.th/ect_th/download/article/article_20181202213454.pdf" target="_blank">PDF ประกาศ บนเว็บ กกต.</a> <u>ถ้า กกต. เห็นเว็บนี้โปรดพิจารณาค่าขนมให้ผมด้วยครับ</u><br><br>ติดต่อ LINE ID: nopash หากพบปัญหา</small>
+    
+    <!-- District Modal -->
+    <div class="modal fade" id="districtModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">เลือกพื้นที่ในจังหวัด{{ selectedProvince }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <button type="button" @click="getParties" :value="matchedDistrict.district_no" class="btn btn-outline-info btn-block text-left" v-for="matchedDistrict in matchedDistricts">
+              {{ matchedDistrict.district_name }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.9/dist/vue.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+  <script src="custom.min.js?v=20190318"></script>
+</body>
+</html>
